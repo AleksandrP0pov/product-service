@@ -6,6 +6,7 @@ import com.example.product_service.service.InventoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,16 +35,19 @@ public class InventoryController {
     }
 
 
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/new")
     public ResponseEntity<Inventory> addInventory(@RequestBody InventoryDto inventory){
         return new ResponseEntity<>(inventoryService.addInventory(inventory), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('admin')")
     @PutMapping("/update")
-    public ResponseEntity<Inventory> update(@RequestBody Inventory inventory){
+    public ResponseEntity<Inventory> updateInventory(@RequestBody Inventory inventory){
         return new ResponseEntity<>(inventoryService.update(inventory), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("delete/{productId}")
     public HttpStatus deleteInventory(@PathVariable Long productId){
         inventoryService.deleteInventory(productId);

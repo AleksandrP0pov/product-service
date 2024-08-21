@@ -3,9 +3,11 @@ package com.example.product_service.controller;
 import com.example.product_service.dto.ProductDto;
 import com.example.product_service.entity.Product;
 import com.example.product_service.service.ProductServiceImpl;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,26 +19,25 @@ public class ProductController {
 
     private final ProductServiceImpl productService;
 
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/new")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productDto){
+    public ResponseEntity<Product> addProduct(@RequestBody ProductDto productDto){
         return new ResponseEntity<>(productService.addProduct(productDto), HttpStatus.OK);
     }
 
+
     @GetMapping
-    public ResponseEntity<List<Product>> readAllProduct(){
+    public ResponseEntity<List<Product>> getAllProduct(){
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Product> readProduct(@PathVariable Long id){
-        return new ResponseEntity<>(productService.getProduct(id), HttpStatus.OK);
-    }
-
+    @PreAuthorize("hasRole('admin')")
     @PutMapping("/update")
     public ResponseEntity<Product> updateProduct(@RequestBody Product product){
         return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/delete/{id}")
     public HttpStatus deleteProduct(@PathVariable Long id){
         productService.deleteProduct(id);
@@ -44,11 +45,11 @@ public class ProductController {
     }
 
     @GetMapping("/category/{id}")
-    public ResponseEntity<List<Product>> readByCategoryId(@PathVariable Long id){
+    public ResponseEntity<List<Product>> getByCategoryId(@PathVariable Long id){
         return new ResponseEntity<>(productService.getByCategoryId(id), HttpStatus.OK);
     }
 
-    @GetMapping("/dto/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductDto(@PathVariable Long id){
         return new ResponseEntity<>(productService.getProductDto(id), HttpStatus.OK);
     }
